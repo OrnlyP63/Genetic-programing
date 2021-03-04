@@ -20,7 +20,7 @@ import math
 ```{python}
 operators = '+-*/'
 values = '0123456789'
-functions = ['sigma']
+functions = {'sigma':1}
 ```
 
 ```{python}
@@ -29,7 +29,7 @@ def sigma(num):
 ```
 
 ```{python}
-S(6)
+sigma(6)
 ```
 
 ```{python}
@@ -41,7 +41,7 @@ def isFunction(val):
 ```
 
 ```{python}
-isFunction('S')
+isFunction('sigma')
 ```
 
 ```{python}
@@ -54,11 +54,11 @@ def getNode():
     b = math.floor(random.random() * 2)
     if a:
         if b:
-            return operators[math.floor(random.random()*len(operators))]
+            return operators[math.floor(random.random() * len(operators))]
         else: 
-            return functions[0]
+            return list(functions.keys())[math.floor(random.random() * len(functions))]
     else:
-        return values[math.floor(random.random()*len(values))]
+        return values[math.floor(random.random() * len(values))]
 ```
 
 ```{python}
@@ -76,8 +76,12 @@ def tree():
         result.extend(right)
         
     elif isFunction(node):
-        arg = tree()
-        result.extend(arg)
+        num_arg = functions[node]
+        arg = [tree() for _ in range(num_arg)]
+        
+#         for i in range(num_arg):
+#             vars()[f'arg_{i}'] = tree()
+        result.extend(*arg)
         
     return result
 ```
@@ -101,7 +105,9 @@ def prefixToInfix(prefix):
             i -= 1
         elif isFunction(prefix[i]):
             # symbol is function
-            str = prefix[i] + "(" + stack.pop() +  ")"
+            num_arg = functions[prefix[i]]
+            arg = [stack.pop() for i in range(num_arg)]
+            str = prefix[i] + "(" + ','.join(arg) +  ")"
             stack.append(str)
             i -= 1
         else:
@@ -119,7 +125,29 @@ a = ['-', '9', '/', '8', 'sigma', 'sigma', '2']
 ```
 
 ```{python}
-prefixToInfix(a)
+b = ['sigma',
+ 'sigma',
+ '*',
+ '*',
+ 'sigma',
+ '+',
+ '4',
+ '0',
+ '/',
+ '*',
+ '8',
+ 'sigma',
+ '8',
+ '9',
+ '*',
+ 'sigma',
+ '1',
+ 'sigma',
+ '7']
+```
+
+```{python}
+prefixToInfix(b)
 ```
 
 ```{python}
@@ -131,9 +159,9 @@ for _ in range(20):
 ```{python}
 for _ in range(20):
     t = tree()
-    s = ''.join(t)
+    
     try:
-        print(eval(prefixToInfix(s)))
+        print(eval(prefixToInfix(t)))
     except ZeroDivisionError:
         print('Infi')
     except MemoryError:
@@ -182,6 +210,50 @@ vars()['A'] = 0
 
 ```{python}
 A
+```
+
+```{python}
+functions = {'sigma':1}
+```
+
+```{python}
+functions['sigma']
+```
+
+```{python}
+'sigma' in functions
+```
+
+```{python}
+list(functions.keys())
+```
+
+```{python}
+for i in range(1):
+    print(i)
+```
+
+```{python}
+def p():
+    print('A')
+    return 1
+```
+
+```{python}
+[p() for i in range(10)]
+```
+
+```{python}
+k = [1,2,3,4,5]
+[k.pop() for i in range(1)]
+```
+
+```{python}
+sigma(10,)
+```
+
+```{python}
+','.join(['1','2'])
 ```
 
 ```{python}
