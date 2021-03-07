@@ -20,7 +20,7 @@ import math
 ```{python}
 operators = '+-*/'
 values = '0123456789'
-functions = {'sigma':1, 'delta':2}
+functions = {'sigma':1, 'delta':2, '+':2, '-':2, '*':2, '/':2}
 ```
 
 ```{python}
@@ -200,6 +200,93 @@ def get_number_of_args(func):
 ```{python}
 def g(a, b): pass
 print (get_number_of_args(g))   # 2
+```
+
+```{python}
+parts = ['-', '+', '*','sigma','5','6','2','*','3','sigma','2'][10:]
+prefixToInfix(parts)
+```
+
+```{python}
+def subPrefix(prefix,index):
+    stack = []
+    prefix = prefix[index:]
+    # read prefix in reverse order
+    i = len(prefix) - 1
+    while i >= 0:
+        if  isOperator(prefix[i]):
+            # symbol is operator
+            str = prefix[i] + ','+ stack.pop() + ','+ stack.pop()
+            stack.append(str)
+            i -= 1
+        elif isFunction(prefix[i]):
+            # symbol is function
+            num_arg = functions[prefix[i]]
+            arg = [stack.pop() for i in range(num_arg)]
+            str = prefix[i]  + ',' + ','.join(arg)
+            stack.append(str)
+            i -= 1
+        else:
+            # symbol is operand
+            stack.append(prefix[i])
+            i -= 1
+            
+     
+    return stack.pop().split(',')
+```
+
+```{python}
+parts = ['-', '+', '*','sigma','5','6','2','*','3','sigma','2']
+subPrefix(parts,1)
+```
+
+```{python}
+parts[0:]
+```
+
+```{python}
+parts[:0]
+```
+
+```{python}
+def replaceAtIndex(inp, index, search, replace):
+    return inp[:index] + replace + inp[index + len(search):]
+```
+
+```{python}
+def crossOver(parent1, parent2):
+
+ 
+    index1 = math.floor(random.random() * len(parent1))
+    index2 = math.floor(random.random() * len(parent2))
+
+    subtree1 = subPrefix(parent1, index1)
+    subtree2 = subPrefix(parent2, index2)
+
+    child1 = replaceAtIndex(parent1, index1, subtree1, subtree2);
+    child2 = replaceAtIndex(parent2, index2, subtree2, subtree1);
+    
+    return [child1, child2]
+```
+
+```{python}
+a = ['-', '9', '/', '8', 'sigma', 'sigma', '2']
+```
+
+```{python}
+b = ['/', '3', '*', 'delta', '+', 'sigma', '+', '5', 'delta', '*', '3', 'delta', '-', '-', '9', 'delta', '-', '6', '7', '3', '5', '-', '+', 'delta', 'delta', '3', '-', '4', '5', '1', '4', '7', 'delta', '1', '5', '-', '4', '4', '*', '9', 'delta', '1', 'delta', '8', 'delta', 'delta', '6', '+', '2', 'delta', '/', 'sigma', 'delta', '1', '3', '8', '5', 'delta', '5', 'sigma', '2', 'delta', '4', 'delta', '4', '5']
+```
+
+```{python}
+g = crossOver(a,b)
+```
+
+```{python}
+print(g[0])
+```
+
+```{python}
+print(g[1])
 ```
 
 ```{python}
