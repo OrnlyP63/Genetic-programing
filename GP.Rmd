@@ -30,7 +30,7 @@ def sigma(num):
 
 ```{python}
 def delta(n,m):
-    return n**m
+    return n**2 + m**2
 ```
 
 ```{python}
@@ -266,7 +266,7 @@ def crossOver(parent1, parent2):
     child1 = replaceAtIndex(parent1, index1, subtree1, subtree2);
     child2 = replaceAtIndex(parent2, index2, subtree2, subtree1);
     
-    return [child1, child2]
+    return child1, child2
 ```
 
 ```{python}
@@ -287,6 +287,106 @@ print(g[0])
 
 ```{python}
 print(g[1])
+```
+
+```{python}
+def mutate(entity):
+    res = entity
+    index = math.floor(random.random() * len(entity))
+    val = entity[index]
+    
+    if isFunction(val):
+        num_arg = functions[val]
+        op = [k for k, v in functions.items() if v==num_arg]
+        r = math.floor(random.random() * len(op))
+        res[index] = op[r]
+    else:
+        r = math.floor(random.random() * len(values))
+        res[index] = values[r]
+        
+    return res
+```
+
+```{python}
+mutate(a)
+```
+
+```{python}
+a
+```
+
+```{python}
+def evaluatePrefix(entity):
+    try:
+        return eval(prefixToInfix(entity))
+    except:
+        return 'nan'
+```
+
+```{python}
+def fitness(entity,targetValue):
+    fitness = evaluatePrefix(entity)
+    if fitness != 'nan':
+        return targetValue - abs(targetValue - fitness)
+    else:
+        return -999999
+```
+
+```{python}
+fitness(['+','1','400'], 500)
+```
+
+```{python}
+def fight(pl1, pl2, tar):
+    if fitness(pl1,tar)>fitness(pl2,tar):
+        return pl1
+    else:
+        return pl2
+```
+
+```{python}
+import numpy as np
+```
+
+```{python}
+n_iter = 50
+n_sel = 30
+n_xover = 70
+p_mutate = 0.2
+target = 123
+n_pop = n_sel + n_xover
+pop_list = [tree() for _ in range(n_pop)]
+
+i=0
+while i<=n_iter:
+    i+=1
+    pop_eval = [fitness(p,target) for p in pop_list]
+    generation = sorted([[ls,ev] for ls, ev in zip(pop_list,pop_eval)],key=lambda x: x[1],reverse=True)
+    
+    survivor = [x[0] for x in generation]
+    new_gen = survivor[:n_sel]
+    
+    for _ in range(n_sel, n_pop, 2):
+        index1,index2,index3,index4 = [random.randint(0, n_sel-1) for _ in range(4)]
+        
+        parent1 = fight(new_gen[index1], new_gen[index2], target)
+        parent2 = fight(new_gen[index3], new_gen[index4], target)
+
+        offsprint1,offsprint2 = crossOver(parent1, parent2)
+        
+        if random.uniform(0,1)<p_mutate:
+            offsprint1 = mutate(offsprint1)
+            
+        new_gen.append(offsprint1)
+        new_gen.append(offsprint2)
+        
+    pop_list = new_gen
+    print('-'*100)
+    print(generation[0])
+    if generation[0][1]==target:
+        print('='*100)
+        print(f'{prefixToInfix(generation[0][0])} = {target}')
+        break
 ```
 
 ```{python}

@@ -1,0 +1,179 @@
+---
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.10.2
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+```{python}
+import numpy as np
+import itertools
+```
+
+```{python}
+def Qperfect_number(n,a,b,c):
+    sum = 0
+    for x in range(1, n):
+        if n % x == 0:
+            sum += x**a
+    return sum == b*n + c
+```
+
+```{python}
+def guess(target_fn=None, n_iter = 5, n_sel = 10, n_xover = 10, p_mutate=0.2, n_show=10):
+    data = [r for r in range(100)]
+    n_pop = n_sel + n_xover
+    pop_list = [[np.random.randint(-100,100),np.random.randint(1,100),np.random.randint(-100,100)] for i in range(n_pop)]
+    code_size = len(pop_list[0])
+    i = 0
+    
+    while i <= n_iter :
+        i += 1
+        pop_pefect_number = []
+        for p in pop_list:
+            pl=[i for i in range(2000) if Qperfect_number(i,p[0],p[1],p[2])]
+            pop_pefect_number.append(pl)
+            
+        old_gen_perfect_number = sorted([[i,j] for i, j in zip(pop_list,pop_pefect_number)], key=lambda x:len(x[1]))[::-1]
+        show = [x[1] for x in old_gen_perfect_number]
+        
+        old_gen = [x[0] for x in old_gen_perfect_number]
+        new_gen = old_gen[:n_sel]  
+        
+        
+        for k in range(n_sel, n_pop, 2):
+            parent = np.random.randint(0, n_sel, 2)
+            crosspoit = np.random.randint(0,code_size)
+            offsprint1 = np.concatenate((new_gen[parent[0]][:crosspoit],
+                                        new_gen[parent[1]][crosspoit:]))
+            offsprint1 = np.concatenate((new_gen[parent[1]][:crosspoit],
+                                        new_gen[parent[0]][crosspoit:]))
+        
+            new_gen.append(offsprint1.tolist())
+            new_gen.append(offsprint2.tolist())
+        
+        for k in range(n_sel,n_pop):
+            if np.random.rand()<p_mutate:
+                mutatepoit = np.random.randint(0,code_size,dtype=np.int)
+                new_gen[k][mutatepoit] = np.random.choice(data)
+        pop = new_gen[:n_show]
+        new_gen.sort()       
+        new_gen = list(k for k,_ in itertools.groupby(new_gen))
+        pop_list = new_gen
+                
+        if len(pop_list) < n_pop:
+            newpop = [ [np.random.randint(1,5),np.random.randint(1,10),np.random.randint(-10,10)] for i in range(n_pop-len(pop_list)) ]
+            pop_list.extend(newpop)
+                                                                                                               
+        print(show[:n_show])
+        print('**********************************************')
+    return pop
+```
+
+```{python}
+guess(target_fn=None, n_iter = 100, n_sel = 10, n_xover = 10, p_mutate=0.2, n_show=10)
+```
+
+```{python}
+1+2+3+5+6+10+15
+```
+
+```{python}
+a=[24, 30, 42, 54, 66, 78, 102, 114, 138, 174, 186, 222, 246, 258, 282, 304, 318, 354, 366, 402, 426, 438, 474, 498, 534, 582, 606, 618, 642, 654, 678, 762, 786, 822, 834, 894, 906, 942, 978, 1002, 1038, 1074, 1086, 1146, 1158, 1182, 1194, 1266, 1338, 1362, 1374, 1398, 1434, 1446, 1506, 1542, 1578, 1614, 1626, 1662, 1686, 1698, 1758, 1842, 1866, 1878, 1902, 1986]
+```
+
+```{python}
+def is_prime(n):
+    if n == 1 or n ==0:
+        return False
+    if n % 2 == 0:
+        return False
+    i = 3
+    while i * i <= n:
+        if n % i == 0:
+            return False
+        i += 2
+    return True
+
+
+# @timeit
+def prime_factors(n):
+    prime_factor_list = []
+    while not n % 2:
+        prime_factor_list.append(2)
+        n //= 2
+    while not n % 3:
+        prime_factor_list.append(3)
+        n //= 3
+    i = 5
+    while n != 1:
+        if is_prime(i):
+            while not n % i:
+                prime_factor_list.append(i)
+                n //= i
+        i += 2
+
+    return prime_factor_list
+```
+
+```{python}
+for i in a:
+    p=prime_factors(i)
+    print(p)
+```
+
+```{python}
+def list_of_divide(n):
+    l=[]
+    for x in range(1, n):
+        if n % x == 0:
+            l.append(x)
+    return l
+```
+
+```{python}
+for i in b:
+    print(list_of_divide(i))
+```
+
+```{python}
+b=[8, 15, 35, 143, 323, 899, 1763]
+```
+
+```{python}
+for i in b:
+    p=prime_factors(i)
+    print(p)
+```
+
+```{python}
+per = []
+for i in range(100000):
+    if Qperfect_number(i,2,2,5):
+        per.append(i)
+```
+
+```{python}
+per
+```
+
+```{python}
+l = [i for i in range(2000) if Qperfect_number(i,1,1,12)]
+```
+
+```{python}
+for i in l:
+    p = i
+    print(prime_factors(p))
+```
+
+```{python}
+
+```
